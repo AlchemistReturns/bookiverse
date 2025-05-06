@@ -34,16 +34,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String jwt;
         final String userEmail;
 
+        System.out.println(authHeader);
+
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        jwt = authHeader.substring(7); // remove "Bearer " prefix
+        jwt = authHeader.substring(7);
         userEmail = jwtService.extractUsername(jwt);
 
         if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            User user = userRepository.findByEmail(userEmail)
+            User user = userRepository.findByEmailFetchBooks(userEmail)
                     .orElseThrow(() -> new RuntimeException("User not found"));
 
             UserPrincipal userPrincipal = new UserPrincipal(user);
@@ -55,10 +57,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                 null,
                                 userPrincipal.getAuthorities()
                         );
+                System.out.println("Authorities after authentication: " + userPrincipal.getAuthorities());
                 authToken.setDetails(
                         new WebAuthenticationDetailsSource().buildDetails(request)
                 );
                 SecurityContextHolder.getContext().setAuthentication(authToken);
+                System.out.println("SecurityContext Authentication: " + SecurityContextHolder.getContext().getAuthentication());
+            } else {
+
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                System.out.println("Authentication Failed");
+                return;
             }
         }
 

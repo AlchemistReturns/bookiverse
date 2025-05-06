@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Set;
 import java.util.List;
 
 @Entity
@@ -26,7 +27,7 @@ public class User {
     private String email;
     private String password;
 
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     private Role role;
     private String authProvider;
 
@@ -37,18 +38,18 @@ public class User {
     @JoinTable(name = "user_read_books",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "book_id"))
-    private List<Book> readBooks;
+    private Set<Book> readBooks;
 
     @ManyToMany
     @JoinTable(name = "user_currently_reading_books",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "book_id"))
-    private List<Book> currentlyReadingBooks;
+    private Set<Book> currentlyReadingBooks;
 
     @ManyToMany
     @JoinTable(name = "user_plan_to_read_books",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "book_id"))
-    private List<Book> planToReadBooks;
+    private Set<Book> planToReadBooks;
 
 }
