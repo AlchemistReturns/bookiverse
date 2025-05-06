@@ -16,10 +16,12 @@ public class JwtService {
     private String secretKey;
 
     @Value("${jwt.expirationMs}")
-    private Long expirationMs;
+    private String expirationMsString;
 
     public String generateToken(User user) {
         Key key = Keys.hmacShaKeyFor(secretKey.getBytes());
+
+        Long expirationMs = Long.parseLong(expirationMsString);
 
         return Jwts.builder()
                 .setSubject(user.getEmail())
