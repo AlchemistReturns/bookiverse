@@ -222,5 +222,25 @@ public class UserController {
         );
     }
 
+    @GetMapping("/book-details/{bookId}")
+    public UserBookDetailsResponse getUserBookDetails(@AuthenticationPrincipal UserPrincipal userPrincipal,
+                                                      @PathVariable Long bookId) {
+
+        User user = userRepository.findByEmail(userPrincipal.getUsername())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        UserBook userBook = userBookRepository.findByUserAndBookId(user, bookId)
+                .orElse(null);
+
+        if (userBook == null) {
+            return new UserBookDetailsResponse(null, null);  // No rating/summary yet
+        }
+
+        return new UserBookDetailsResponse(
+                userBook.getRating(),
+                userBook.getSummary()
+        );
+    }
+
 
 }

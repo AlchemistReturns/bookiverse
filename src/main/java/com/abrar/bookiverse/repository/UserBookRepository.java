@@ -10,4 +10,6 @@ import java.util.Optional;
 public interface UserBookRepository extends JpaRepository<UserBook, Long> {
 
     Optional<UserBook> findByUserAndBook(User user, Book book);
+
+    Optional<UserBook> findByUserAndBookId(User user, Long bookId);
 }
